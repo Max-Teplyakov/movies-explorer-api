@@ -4,15 +4,12 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
 const cors = require('cors');
-const NotFoundError = require('./errors/NotFoundError');
+const InternalServerError = require('./errors/InternalServerError');
 
 const app = express();
-const auth = require('./middlewares/auth');
 const routes = require('./routes/index');
-const { createUser, login } = require('./controllers/users');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/filmsdb' } = process.env;
@@ -44,48 +41,12 @@ app.get('/crash-test', () => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
 });
-app.post(
-  '/signin',
-  celebrate({
-    body: Joi.object().keys({
-      email: Joi.string()
-        .required()
-        .pattern(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/),
-      password: Joi.string().required().min(8),
-      name: Joi.string().min(2).max(30),
-    }),
-  }),
-  login,
-);
 
-app.post(
-  '/signup',
-  celebrate({
-    body: Joi.object().keys({
-      name: Joi.string().min(2).max(30),
-      email: Joi.string()
-        .required()
-        .pattern(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/),
-      password: Joi.string().required().min(8),
-    }),
-  }),
-  createUser,
-);
-app.use(auth);
 app.use(routes);
 app.use(errorLogger);
-app.use((req, res, next) => {
-  next(new NotFoundError('Error Server'));
-});
-app.use(errors());
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
 
-  res.status(statusCode).send({
-    message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
-  });
-});
+app.use(errors());
+app.use(InternalServerError);
 
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
