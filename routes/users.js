@@ -4,6 +4,7 @@ const {
   getUser,
   updateProfileUser,
 } = require('../controllers/users');
+const { REG_EMAIL } = require('../utils/utils');
 
 router.get('/users/me', getUser);
 router.patch(
@@ -13,7 +14,7 @@ router.patch(
       name: Joi.string().min(2).max(30).required(),
       email: Joi.string()
         .required()
-        .pattern(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/),
+        .pattern(REG_EMAIL),
     }),
   }),
   updateProfileUser,

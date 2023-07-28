@@ -6,7 +6,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const ValidationError = require('../errors/ValidationError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
-module.exports.getMovies = (req, res, next) => Movie.find({})
+module.exports.getMovies = (req, res, next) => Movie.find({ owner: req.user._id })
   .then((movie) => res.status(OK_SERVER).send(movie))
   .catch(next);
 

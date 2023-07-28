@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const {
@@ -6,6 +5,7 @@ const {
   createMovie,
   deleteMovie,
 } = require('../controllers/movies');
+const { REG_URL } = require('../utils/utils');
 
 router.get('/movies', getMovies);
 
@@ -21,17 +21,17 @@ router.post(
       image: Joi.string()
         .required()
         .pattern(
-          /^https?:\/\/[\w\-\.\/~:\?\#\[\]@!$&'\(\)\*\+,;=]+[\-\.\/~:\?\#\[\]@!$&'\(\)\*\+,;=]{1}[\w\-\.\/~:\?\#\[\]@!$&'\(\)\*\+,;=]+[#\/]?$/,
+          REG_URL,
         ),
       trailerLink: Joi.string()
         .required()
         .pattern(
-          /^https?:\/\/[\w\-\.\/~:\?\#\[\]@!$&'\(\)\*\+,;=]+[\-\.\/~:\?\#\[\]@!$&'\(\)\*\+,;=]{1}[\w\-\.\/~:\?\#\[\]@!$&'\(\)\*\+,;=]+[#\/]?$/,
+          REG_URL,
         ),
       thumbnail: Joi.string()
         .required()
         .pattern(
-          /^https?:\/\/[\w\-\.\/~:\?\#\[\]@!$&'\(\)\*\+,;=]+[\-\.\/~:\?\#\[\]@!$&'\(\)\*\+,;=]{1}[\w\-\.\/~:\?\#\[\]@!$&'\(\)\*\+,;=]+[#\/]?$/,
+          REG_URL,
         ),
       movieId: Joi.number().integer().required(),
       nameRU: Joi.string().required(),

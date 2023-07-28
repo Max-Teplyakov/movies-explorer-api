@@ -40,8 +40,8 @@ router.use(auth);
 router.use('/', userRoutes);
 router.use('/', filmRoutes);
 
-router.use((req, res, next) => {
-  next(new NotFoundError('Error Server'));
+router.use('*', (req, res, next) => {
+  next(new NotFoundError('Такая страница остутсвует'));
 });
 
 module.exports = router;
