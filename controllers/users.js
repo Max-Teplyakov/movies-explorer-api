@@ -64,6 +64,7 @@ module.exports.updateProfileUser = (req, res, next) => {
       res.status(OK_SERVER).send(user);
     })
     .catch((err) => {
+      if (err.code === 11000) return next(new ConflictError('Пользователь с таким EMAIl уже существует'));
       if (err.name === 'ValidationError') { return next(new ValidationError('Data is not corected')); }
       return next(err);
     });

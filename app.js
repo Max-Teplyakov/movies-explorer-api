@@ -11,8 +11,9 @@ const InternalServerError = require('./errors/InternalServerError');
 const app = express();
 const routes = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { PORT_DEV, DB_URL_DEV } = require('./utils/configuration');
 
-const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/filmsdb' } = process.env;
+const { PORT = PORT_DEV, DB_URL = DB_URL_DEV } = process.env;
 app.use(cors());
 
 app.use(express.json());
@@ -20,10 +21,8 @@ app.use(express.json());
 mongoose
   .connect(DB_URL, {
     useNewUrlParser: true,
-  })
-  .then(() => {
-    console.log('connected bd');
   });
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
@@ -42,5 +41,5 @@ app.use(errors());
 app.use(InternalServerError);
 
 app.listen(PORT, () => {
-  console.log(`listening on ${PORT}`);
+
 });
